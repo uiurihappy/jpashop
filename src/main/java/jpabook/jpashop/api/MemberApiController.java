@@ -14,6 +14,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class MemberApiController {
 
+    // final class
     private final MemberService memberService;
 
     @PostMapping("/api/v1/members")
