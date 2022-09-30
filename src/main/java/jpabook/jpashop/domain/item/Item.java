@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE) //싱글테이블 상속 전략
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE) // 싱글테이블 상속 전략
 @DiscriminatorColumn(name = "dtype")    //book이면 어떻게 할것이냐
 @Getter @Setter
 public abstract class Item {

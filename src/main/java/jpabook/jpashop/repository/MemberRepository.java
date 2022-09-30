@@ -15,10 +15,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberRepository {
     //@Autowired
-    //@PersistenceContext           //표준 annotation //JPA의 entityManager를
-    private final EntityManager em; //스프링이 entityManager를 만들어서 주입을 시켜준다.
+    //@PersistenceContext           //표준 annotation //JPA 의 entityManager 를
+    private final EntityManager em; //스프링이 entityManager 를 만들어서 주입을 시켜준다.
 
-    // @PersistenceUnit    // entityManagerFactory를 직접 주입받고 싶다면
+    // @PersistenceUnit    // entityManagerFactory 직접 주입받고 싶다면
     // private EntityManagerFactory emf;
 
     public void save(Member member){
