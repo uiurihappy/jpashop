@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/test
-    username: sa
+    url: jdbc:mysql://localhost:3306/jpashop?serverTimezone=Asia/Seoul
+    username: root
     password:
-    driver-class-name: org.h2.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: create

@@ -1,9 +1,20 @@
+src/main/resources/*.yml
+
 HELP.md
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+
+# DS_store
+.DS_Store
+
+# .env
+/src/.env
+
+# application properties
+# /src/main/**/application.properties
 
 ### STS ###
 .apt_generated
