@@ -19,7 +19,7 @@ public class MemberService {
     // 요즘 사용하는 방식으로 constructor injection을 사용한다.
     private final MemberRepository memberRepository;
     // 장점: 테스트케이스를 작성할 때, memberService로 예시를 들면 무언가 놓치지 않고 해결가능
-    // @Autowired //최신 스프링 기법으로는 @Autowired를 사용하지 않는다.
+    // @Autowired // 최신 스프링 기법으로는 @Autowired를 사용하지 않는다.
     // 왜냐면 스프링이 자동으로 주입을 시켜준다. 대신 final을 작성해야한다.
 //    public MemberService(MemberRepository memberRepository) {
 //        this.memberRepository = memberRepository;
@@ -35,6 +35,7 @@ public class MemberService {
     //회원 가입
     @Transactional  //데이터 변경을 위해 필요
     public Long join(Member member){
+        // 회원 중복 체크 후 저장
         validateDuplicateMember(member);    //중복 회원 검증
         memberRepository.save(member);
         return member.getId();
