@@ -2,14 +2,13 @@ package jpabook.jpashop.api;
 
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.service.MemberService;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 // @Controller , @ResponseBody 합친 것
 @RestController
@@ -43,8 +42,20 @@ public class MemberApiController {
         return new CreateMemberResponse(id);
     }
 
+    // PUT은 멱등하다.
+    @PutMapping("/update/{id}")
+    public UpdateMemberResponse updateMemberV2(
+            @PathVariable("id") Long id,
+            @RequestBody @Valid UpdateMemberRequest request
+    ) {
+        memberService.update(id, request.getName());
+        Member findMember = memberService.findOne(id);
+        return new UpdateMemberResponse(findMember.getId(), findMember.getName());
+    }
+
     @Data
     static class CreateMemberRequest {
+        @NotEmpty
         private String name;
     }
 
@@ -54,6 +65,25 @@ public class MemberApiController {
 
         // 생성자
         public CreateMemberResponse(Long id) {
+            this.id = id;
+        }
+    }
+
+    @Data
+    static class UpdateMemberRequest {
+        @NotEmpty
+        private String name;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class UpdateMemberResponse {
+        @NotEmpty
+        private Long id;
+        @NotEmpty
+        private String name;
+
+        public UpdateMemberResponse(Long id){
             this.id = id;
         }
     }

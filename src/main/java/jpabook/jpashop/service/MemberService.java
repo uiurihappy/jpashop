@@ -50,6 +50,21 @@ public class MemberService {
 
     }
 
+    /**
+     * 회원 수정
+     * 변경감지를 사용해야 한다.
+     * @return
+     */
+    @Transactional
+    public void update(Long id, String name) {
+        Member member = memberRepository.findOne(id);
+        // 변경감지 시작
+        member.setName(name);
+        // 수정 종료되면서 spring AOP 동작
+        // Transactional로 인해 commit
+        // jpa가 영속성 컨텍스트에 flush 동작
+    }
+
     //회원 전체 조회
     public List<Member> findMembers() {
         return memberRepository.findAll();
