@@ -1,5 +1,6 @@
 package jpabook.jpashop.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,6 +23,8 @@ public class Member {
     @Embedded
     private Address address;
 
+    // 반대로 가는 유저의 주문을 ignore를 해야 한다.
+    @JsonIgnore
     @OneToMany(mappedBy = "member") //연관 관계의 주인(읽기 전용)
     private List<Order> orders = new ArrayList<>();
 

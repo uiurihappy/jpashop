@@ -23,9 +23,12 @@ public class Order {
     private Long id;
 
     // 멤버랑 관계 setting
-    //ManyToOne은 전부 다 코드를 찾아서 Lazy로 바꿔야 한다.
-    @ManyToOne(fetch = LAZY) //다대일   //order를 조회할 때 member를 조인해서 같이 가진다.
+    // ManyToOne은 전부 다 코드를 찾아서 Lazy로 바꿔야 한다.
+    // 지연 로딩의 말로는 db에서 안 끌고 온다. order의 멤버만 가져오는 것이다.
+    @ManyToOne(fetch = LAZY) // 다대일   //order를 조회할 때 member를 조인해서 같이 가진다.
     @JoinColumn(name = "member_id") //매핑을 member_id로 잡는다.
+    // null을 직접 적으로 초기화할 수 없으니 hibernate에서 proxy 라이브러리를 사용하여 가짜 member를 생성해준다.
+    // byteBuddy 라는 라이브러리로 생성 및 초기화
     private Member member;
 
     //cascade All이란 order를 persist하면 들어와있는 컬렉션 OrderItem도 다 persist를 강제로 날려준다.
