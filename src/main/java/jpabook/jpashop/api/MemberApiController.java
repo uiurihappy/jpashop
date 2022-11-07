@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 // @Controller , @ResponseBody 합친 것
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/v1/members")
+@RequestMapping(path = "/api/members")
 public class MemberApiController {
 
     // final class
@@ -30,7 +30,7 @@ public class MemberApiController {
     }
 
     // 회원 조회 API v2
-    @GetMapping("/getV2")
+    @GetMapping("/get/v2")
     public MemberResult<List<MemberDTO>> memberV2() {
         List<Member> findMembers = memberService.findMembers();
         List<MemberDTO> members = findMembers.stream()
@@ -55,7 +55,6 @@ public class MemberApiController {
         private String name;
     }
 
-
     // 회원 등록 API v2
     @PostMapping("/set")
     public CreateMemberResponse saveMemberV1(@RequestBody @Valid Member member){
@@ -69,7 +68,7 @@ public class MemberApiController {
      * @param request
      * @return member id
      */
-    @PostMapping("/setV2")
+    @PostMapping("/set/v2")
     public CreateMemberResponse saveMemberV2(@RequestBody @Valid CreateMemberRequest request){
         Member member = new Member();
 
