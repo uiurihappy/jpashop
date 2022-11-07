@@ -13,10 +13,6 @@ build/
 # .env
 /src/.env
 
-# application properties
-/src/main/**/application.yml
-/src/main/resources/application.yml
-
 ### STS ###
 .apt_generated
 .classpath
@@ -37,6 +33,10 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+# application properties
+application.yml
+/src/main/**/application.yml
+/src/main/resources/application.yml
 
 ### NetBeans ###
 /nbproject/private/
