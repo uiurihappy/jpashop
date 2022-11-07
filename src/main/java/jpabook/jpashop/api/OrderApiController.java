@@ -1,14 +1,20 @@
 package jpabook.jpashop.api;
 
+import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * X to One
@@ -39,5 +45,44 @@ public class OrderApiController {
 		}
 
 		return all;
+	}
+
+	@GetMapping("/v2/get")
+	public OrderResult<List<OrderDTO>> ordersV2() {
+		// if order result count 2,
+		List<Order> orders = orderRepository.findAllByString(new OrderSearch());
+
+		// order 결과가 두번 나온다면, 루프가 한 결과에 또 단 쿼리를 쏴주게 된다.
+		// 즉, 쿼리가 order를 부를 때 1번, 결과 개수에 따라 쿼리가 두번씩 호출된다. (쿼리 호출 수: order 호출쿼리 1번 + order 결과 수 * 2)
+		// 소위 1+N 문제가 발생
+		List<OrderDTO> result = orders.stream()
+				.map(o -> new OrderDTO(o))
+				.collect(Collectors.toList());
+//		System.out.println(result);
+		return new OrderResult<>(result);
+	}
+
+	// DTO로 바꾸는 일반적인 방법
+	@Data
+	@AllArgsConstructor
+	static class OrderResult<T> {
+		private T data;
+	}
+	@Data
+	static class OrderDTO {
+		private Long orderId;
+		private String name;
+		private LocalDateTime orderDate;
+		private OrderStatus orderStatus;
+		private Address address;
+
+		// constructor
+		public OrderDTO(Order order) {
+			orderId = order.getId();
+			name = order.getMember().getName();  // LAZY 초기화: 영속성 컨텍스트가 member_id를 가지고 영속성 컨텍스트에 찾아본다.
+			orderDate = order.getOrderDate();
+			orderStatus = order.getStatus();
+			address = order.getDelivery().getAddress(); // LAZY 초기화
+		}
 	}
 }
