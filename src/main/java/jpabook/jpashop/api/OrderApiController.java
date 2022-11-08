@@ -50,6 +50,7 @@ public class OrderApiController {
 	@GetMapping("/v2/get")
 	public OrderResult<List<OrderDTO>> ordersV2() {
 		// if order result count 2,
+		// 1+N -> 1 + 회원 N + 배송 N
 		List<Order> orders = orderRepository.findAllByString(new OrderSearch());
 
 		// order 결과가 두번 나온다면, 루프가 한 결과에 또 단 쿼리를 쏴주게 된다.
@@ -60,6 +61,18 @@ public class OrderApiController {
 				.collect(Collectors.toList());
 //		System.out.println(result);
 		return new OrderResult<>(result);
+	}
+
+	@GetMapping("/v3/get")
+	public OrderResult<List<OrderDTO>> orderV3() {
+		// fetch join 활용
+		List<Order> orders = orderRepository.findAllWithMemberDelivery();
+		List<OrderDTO> result = orders.stream()
+				.map(o -> new OrderDTO(o))
+				.collect(Collectors.toList());
+
+		return new OrderResult<>(result);
+
 	}
 
 	// DTO로 바꾸는 일반적인 방법

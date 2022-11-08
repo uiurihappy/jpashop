@@ -94,5 +94,20 @@ public class OrderRepository {
 
     }
 
+    // fetch join
+    // member랑 delivery를 join하여 한번에 가져온다.
+    public List<Order> findAllWithMemberDelivery() {
+        return em.createQuery(
+                "select o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d", Order.class
+        ).getResultList();
+    }
+    /**
+     * fetch join으로 한번에 다 들고옴
+     * order -> member, order -> delivery는 이미 order에서 조회된 상태라 지연로딩이 되지 않고 전혀 무관함
+     * 정말 자주 사용하고 권장이 아니라 relation 엮을 때는 거의 필수라 보는 경우
+     */
+
 
 }
