@@ -1,6 +1,7 @@
 package jpabook.jpashop.repository;
 
 import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.repository.dtos.orderDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -103,10 +104,27 @@ public class OrderRepository {
                         " join fetch o.delivery d", Order.class
         ).getResultList();
     }
+
     /**
      * fetch join으로 한번에 다 들고옴
      * order -> member, order -> delivery는 이미 order에서 조회된 상태라 지연로딩이 되지 않고 전혀 무관함
      * 정말 자주 사용하고 권장이 아니라 relation 엮을 때는 거의 필수라 보는 경우
+     */
+
+    public List<orderDTO> findOrderDtos() {
+        return em.createQuery(
+                "select new jpabook.jpashop.repository.dtos.orderDTO(o.id, m.name, o.orderDate, o.status, d.address) " +
+                        "from Order o" +
+                        " join o.member m" +
+                        " join o.delivery d", orderDTO.class
+        ).getResultList();
+    }
+    /*
+         query에 있는 o가 매핑될 수가 없다.
+         엔티티나 객체는 반환 받을 수 있지만 dto는 반환받을 수 없다.
+         할려면 new 연산자를 사용해야한다.
+         얘는 재사용성이 떨어지고, 한 API에 너무 의존적이라 스펙이 바뀌면 당장 뜯어야 하는 구조이고 코드 수정이 많아진다.
+         그리고 코드가 더럽다...
      */
 
 

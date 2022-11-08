@@ -5,6 +5,7 @@ import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.dtos.orderDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,15 @@ import java.util.stream.Collectors;
  * Order -> Delevery (OneToOne)
  * 성능 최적화
  */
+
+/**
+ * ** 정리 **
+ * 1. 우선 엔티티를 DTO로 변환하는 방법을 선택한다. (유지보수성)
+ * 2. 필요하면 fetch join으로 성능을 최적화 해본다. -> 대부분의 성능 이슈가 해결된다. (성능 최적화)
+ * 3. 그래도 안되면 DTO로 직접 조회하는 방법을 사용한다. (성능 최적화가 안될 시에 다른 방법)
+ * 4. 최후의 방법은 JPA가 제공하는 네이티브 SQL이나 스프링 JDBC Template을 사용해서 SQL을 직접 사용한다.
+ */
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/orders")
@@ -75,6 +85,20 @@ public class OrderApiController {
 
 	}
 
+	@GetMapping("/v4/get")
+	public OrderResult<List<orderDTO>> orderV4() {
+		List<orderDTO> orders = orderRepository.findOrderDtos();
+		List<orderDTO> result = orders.stream()
+				.map(o -> new orderDTO(o.getOrderId(), o.getName(), o.getOrderDate(), o.getOrderStatus(), o.getAddress()))
+				.collect(Collectors.toList());
+		return new OrderResult<>(result);
+	}
+	// v3와 다르게 select 절에서 원하는 데이터만 가져오도록 하였다.
+	// v3는 fetch join을 통하여 전부 다 긁어오는 select 절을 사용하면 네트워크 적으로 낭비일 수도 있다.
+
+	// v3와 v4의 성능이나 사용도 우열을 가리기는 애매하다. 트레이더 오프가 있기 때문이다.
+
+
 	// DTO로 바꾸는 일반적인 방법
 	@Data
 	@AllArgsConstructor
@@ -98,4 +122,5 @@ public class OrderApiController {
 			address = order.getDelivery().getAddress(); // LAZY 초기화
 		}
 	}
+
 }
