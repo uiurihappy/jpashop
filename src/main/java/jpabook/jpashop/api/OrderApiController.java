@@ -2,12 +2,14 @@ package jpabook.jpashop.api;
 
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
 import jpabook.jpashop.repository.dtos.orderDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,7 +43,7 @@ public class OrderApiController {
 	private final OrderRepository orderRepository;
 
 	@GetMapping("/v1/get")
-	public List<Order> ordersV1() {
+	public List<Order> ordersGetV1() {
 		// 1. 양방향 매핑에서 걸려오는 것을 다 jsonignore 시켜줘야 한다.
 		// 2. 지연 로딩 문제로 인해 가짜 객체들을 끌고 오는 현상, 해결책: hibernate5 build.gradle에 모듈 설치
 		List<Order> all = orderRepository.findAllByString(new OrderSearch());
@@ -58,7 +60,7 @@ public class OrderApiController {
 	}
 
 	@GetMapping("/v2/get")
-	public OrderResult<List<OrderDTO>> ordersV2() {
+	public OrderResult<List<OrderDTO>> ordersGetV2() {
 		// if order result count 2,
 		// 1+N -> 1 + 회원 N + 배송 N
 		List<Order> orders = orderRepository.findAllByString(new OrderSearch());
@@ -74,7 +76,7 @@ public class OrderApiController {
 	}
 
 	@GetMapping("/v3/get")
-	public OrderResult<List<OrderDTO>> orderV3() {
+	public OrderResult<List<OrderDTO>> orderGetV3() {
 		// fetch join 활용
 		List<Order> orders = orderRepository.findAllWithMemberDelivery();
 		List<OrderDTO> result = orders.stream()
@@ -86,7 +88,7 @@ public class OrderApiController {
 	}
 
 	@GetMapping("/v4/get")
-	public OrderResult<List<orderDTO>> orderV4() {
+	public OrderResult<List<orderDTO>> orderGetV4() {
 		List<orderDTO> orders = orderRepository.findOrderDtos();
 		List<orderDTO> result = orders.stream()
 				.map(o -> new orderDTO(o.getOrderId(), o.getName(), o.getOrderDate(), o.getOrderStatus(), o.getAddress()))
@@ -95,7 +97,6 @@ public class OrderApiController {
 	}
 	// v3와 다르게 select 절에서 원하는 데이터만 가져오도록 하였다.
 	// v3는 fetch join을 통하여 전부 다 긁어오는 select 절을 사용하면 네트워크 적으로 낭비일 수도 있다.
-
 	// v3와 v4의 성능이나 사용도 우열을 가리기는 애매하다. 트레이더 오프가 있기 때문이다.
 
 
@@ -122,5 +123,4 @@ public class OrderApiController {
 			address = order.getDelivery().getAddress(); // LAZY 초기화
 		}
 	}
-
 }
