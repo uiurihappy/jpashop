@@ -59,6 +59,28 @@ public class OrderApiControllerV2 {
 		return new OrderResult<>(result);
 	}
 
+	// 여기서 중요한 점은 controller 단에서 v2, v3 로직에 대한 차이가 없다.
+	// 그렇다면 production 환경이면 repository를 생성히여 데이터를 반환받을 때
+	// 일일히 데이터에 알맞는 dto를 선언해줘야 한다.
+	@GetMapping("/v3/getOrders")
+	public OrderResult<List<OrderDto>> orderV3(){
+		List<Order> orders = orderRepository.findAllWithItem(new OrderSearch());
+
+//		for (Order order : orders) {
+//			// ref, 참조값까지 같은 것을 확인할 수 있다.
+//			System.out.println("order ref =" + order + "id = " + order.getId());
+//		}
+		// 루프 돌리면서 dto로 변환한다.
+		List<OrderDto> result = orders.stream()
+				.map(o -> new OrderDto(o))
+				.collect(Collectors.toList());
+
+		return new OrderResult<>(result);
+	}
+	// 단점: 페이징 쿼리가 불가능해진다.
+	// 페이징이란? db에서 원하는 데이터 index에서 limit까지 가져오는 것으로 paging 처리한다고 볼 수 있다.
+
+
 	@Data
 	@AllArgsConstructor
 	static class OrderResult<T> {

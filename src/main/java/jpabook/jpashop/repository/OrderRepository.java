@@ -119,6 +119,24 @@ public class OrderRepository {
                         " join o.delivery d", orderDTO.class
         ).getResultList();
     }
+
+    // 문제1: order가 두 번씩 찍히는 현상이 발생
+
+    public List<Order> findAllWithItem(OrderSearch orderSearch) {
+        // distinct를 통해 order의 ref를 중복 제거하여 추출한다.
+        // 그러나 db 쿼리를 뽑을 때와는 다르다.
+        // jpa에서 자체적으로 distinct가 있으면 만약 pk id가 같다? 그럼 자체적으로 중복을 제거해준다.
+        return em.createQuery(
+                // 동작과정
+                // 순서는 db에 distinct를 먼저 날려 쿼리를 쏘고,
+                // entity가 중복인 경우 제거를 하여 collection을 return 해준다.
+                "select distinct o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d" +
+                        " join fetch o.orderItems oi" +
+                        " join fetch oi.item i", Order.class)
+                .getResultList();
+    }
     /*
          query에 있는 o가 매핑될 수가 없다.
          엔티티나 객체는 반환 받을 수 있지만 dto는 반환받을 수 없다.
