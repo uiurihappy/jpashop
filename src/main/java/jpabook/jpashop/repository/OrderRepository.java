@@ -105,6 +105,17 @@ public class OrderRepository {
         ).getResultList();
     }
 
+    public List<Order> findAllWithMemberDeliveryV2(int offset, int limit) {
+        return em.createQuery(
+                "select o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
+
     /**
      * fetch join으로 한번에 다 들고옴
      * order -> member, order -> delivery는 이미 order에서 조회된 상태라 지연로딩이 되지 않고 전혀 무관함
@@ -130,6 +141,7 @@ public class OrderRepository {
                 // 동작과정
                 // 순서는 db에 distinct를 먼저 날려 쿼리를 쏘고,
                 // entity가 중복인 경우 제거를 하여 collection을 return 해준다.
+                // 여기서 order의 ToOne 관계 테이블은 member와 delivery이다.
                 "select distinct o from Order o" +
                         " join fetch o.member m" +
                         " join fetch o.delivery d" +

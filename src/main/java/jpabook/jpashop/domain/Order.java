@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import static javax.persistence.FetchType.*;
 
+//@BatchSize(size = 1000)
 @Entity
 @Table(name = "orders")
 @Getter @Setter
@@ -32,6 +34,7 @@ public class Order {
     private Member member;
 
     //cascade All이란 order를 persist하면 들어와있는 컬렉션 OrderItem도 다 persist를 강제로 날려준다.
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)   //orderItems에 데이터만 넣어두고
     // order를 저장하면 같이 저장된다.
     private List<OrderItem> orderItems = new ArrayList<>();

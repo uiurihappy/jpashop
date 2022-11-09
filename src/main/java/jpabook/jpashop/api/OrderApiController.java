@@ -35,6 +35,23 @@ import java.util.stream.Collectors;
  * 4. 최후의 방법은 JPA가 제공하는 네이티브 SQL이나 스프링 JDBC Template을 사용해서 SQL을 직접 사용한다.
  */
 
+/**
+ *  V1. 엔티티 직접 노출
+ *  - 엔티티가 변하면 API 스펙이 변한다.
+ *  - 트랜잭션 안에서 지연 로딩 필요
+ *  - 양방향 연관관계 문제 *
+ *  V2. 엔티티를 조회해서 DTO로 변환(fetch join 사용X)
+ *  - 트랜잭션 안에서 지연 로딩 필요
+ *  V3. 엔티티를 조회해서 DTO로 변환(fetch join 사용O)
+ *  - 페이징 시에는 N 부분을 포기해야함(대신에 batch fetch size? 옵션 주면 N -> 1 쿼리로 변경 가능) *
+ *  V4.JPA에서 DTO로 바로 조회, 컬렉션 N 조회 (1+NQuery)
+ *  - 페이징 가능
+ *  V5.JPA에서 DTO로 바로 조회, 컬렉션 1 조회 최적화 버전 (1+1Query)
+ *  - 페이징 가능
+ *  V6. JPA에서 DTO로 바로 조회, 플랫 데이터(1Query) (1 Query)
+ *  - 페이징 불가능... *
+ */
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/orders")
@@ -98,6 +115,8 @@ public class OrderApiController {
 	// v3와 다르게 select 절에서 원하는 데이터만 가져오도록 하였다.
 	// v3는 fetch join을 통하여 전부 다 긁어오는 select 절을 사용하면 네트워크 적으로 낭비일 수도 있다.
 	// v3와 v4의 성능이나 사용도 우열을 가리기는 애매하다. 트레이더 오프가 있기 때문이다.
+
+
 
 
 	// DTO로 바꾸는 일반적인 방법
