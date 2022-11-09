@@ -57,7 +57,7 @@ public class MemberService {
      */
     @Transactional
     public void update(Long id, String name) {
-        Member member = memberRepository.findOne(id);
+        Member member = memberRepository.findById(id).get();
         // 변경감지 시작
         member.setName(name);
         // 수정 종료되면서 spring AOP 동작
@@ -70,7 +70,7 @@ public class MemberService {
         return memberRepository.findAll();
     }
     public Member findOne(Long memberId) {
-        return memberRepository.findOne(memberId);
+        return memberRepository.findById(memberId).get();
     }
 
 }
