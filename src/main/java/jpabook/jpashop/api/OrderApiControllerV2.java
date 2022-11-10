@@ -113,15 +113,31 @@ public class OrderApiControllerV2 {
 	 * size는 100~1000 사이로 설정하는 것을 권장한다. 이유는 batch를 시작하면 db 데이터를 확 size만큼 땡기기에 부하가 걸리지 않는 선에서 책정해야 한다.
 	 */
 
+	// JPA 에서 DTO 직접 조회
 	@GetMapping("/v4/getOrders")
 	public OrderResult<List<OrderQueryDto>> orderV4() {
 		List<OrderQueryDto> orderQuery = orderQueryRepository.findOrderQueryDtos();
 
 		return new OrderResult<>(orderQuery);
-
 	}
 
-	
+
+	// JPA 에서 DTO 직접 조회 - 컬렉션 최적화
+	@GetMapping("/v5/getOrders")
+	public OrderResult<List<OrderQueryDto>> orderV5() {
+		List<OrderQueryDto> orderQuery = orderQueryRepository.findAllByDto();
+
+		return new OrderResult<>(orderQuery);
+	}
+
+	// JPA 에서 DTO 직접 조회, 플랫 데이터 최적화
+//	@GetMapping("v6/getOrders")
+//	public OrderResult<List<OrderQueryDto>> orderV6() {
+//		List<OrderQueryDto> orderQuery = orderQueryRepository.findAllByBto_Flat();
+//
+//		return new OrderResult<>(orderQuery);
+//	}
+
 
 
 	@Data
