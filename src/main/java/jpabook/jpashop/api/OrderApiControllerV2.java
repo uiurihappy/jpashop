@@ -7,6 +7,8 @@ import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
 
+import jpabook.jpashop.repository.order.OrderFlatDto;
+import jpabook.jpashop.repository.order.OrderItemQueryDto;
 import jpabook.jpashop.repository.order.OrderQueryDto;
 import jpabook.jpashop.repository.order.OrderQueryRepository;
 import lombok.AllArgsConstructor;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -55,7 +59,7 @@ public class OrderApiControllerV2 {
 		// 루프 돌리면서 dto로 변환한다.
 		List<OrderDto> result = orders.stream()
 				.map(o -> new OrderDto(o))
-				.collect(Collectors.toList());
+				.collect(toList());
 		return new OrderResult<>(result);
 	}
 
@@ -73,7 +77,7 @@ public class OrderApiControllerV2 {
 		// 루프 돌리면서 dto로 변환한다.
 		List<OrderDto> result = orders.stream()
 				.map(o -> new OrderDto(o))
-				.collect(Collectors.toList());
+				.collect(toList());
 
 		return new OrderResult<>(result);
 	}
@@ -101,7 +105,7 @@ public class OrderApiControllerV2 {
 		// 루프 돌리면서 dto로 변환한다.
 		List<OrderDto> result = orders.stream()
 				.map(o -> new OrderDto(o))
-				.collect(Collectors.toList());
+				.collect(toList());
 
 		return new OrderResult<>(result);
 	}
@@ -131,12 +135,27 @@ public class OrderApiControllerV2 {
 	}
 
 	// JPA 에서 DTO 직접 조회, 플랫 데이터 최적화
-//	@GetMapping("v6/getOrders")
-//	public OrderResult<List<OrderQueryDto>> orderV6() {
-//		List<OrderQueryDto> orderQuery = orderQueryRepository.findAllByBto_Flat();
-//
-//		return new OrderResult<>(orderQuery);
-//	}
+	// API 스펙이 OrderQueryDto 스펙이 아닌 OrderFlatDto 스펙으로 된다.
+	@GetMapping("v6/getOrders")
+	public OrderResult<List<OrderQueryDto>> orderV6() {
+		List<OrderFlatDto> flats = orderQueryRepository.findAllByBto_Flat();
+
+
+		List<OrderQueryDto> result = flats.stream()
+				.collect(groupingBy(o -> new OrderQueryDto(o.getOrderId(),
+								o.getName(), o.getOrderDate(), o.getOrderStatus(), o.getAddress()),
+						mapping(o -> new OrderItemQueryDto(o.getOrderId(),
+								o.getItemName(), o.getOrderPrice(), o.getCount()), toList())
+				)).entrySet().stream()
+				.map(e -> new OrderQueryDto(e.getKey().getOrderId(),
+						e.getKey().getName(), e.getKey().getOrderDate(), e.getKey().getOrderStatus(),
+
+						e.getKey().getAddress(), e.getValue()))
+				.collect(toList());
+
+		return new OrderResult<>(result);
+
+	}
 
 
 
@@ -171,7 +190,7 @@ public class OrderApiControllerV2 {
 			// default_batch_fetch_size는 where in query 갯수를 몇개로 할건가?
 			orderItems = o.getOrderItems().stream()
 					.map(orderItem -> new OrderItemDto(orderItem))
-					.collect(Collectors.toList());
+					.collect(toList());
 		}
 	}
 

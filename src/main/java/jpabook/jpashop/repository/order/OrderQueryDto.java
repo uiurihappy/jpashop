@@ -3,11 +3,15 @@ package jpabook.jpashop.repository.order;
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.OrderStatus;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
+// 객체니까 orderId equals hash code를 알려줘야한다.
+// orderId 기준으로 묶는다는 것
+@EqualsAndHashCode(of = "orderId")
 public class OrderQueryDto {
 
 	private Long orderId;
@@ -24,5 +28,14 @@ public class OrderQueryDto {
 		this.orderStatus = orderStatus;
 		this.address = address;
 //		this.orderItems = orderItems;
+	}
+
+	public OrderQueryDto(Long orderId, String name, LocalDateTime orderDate, OrderStatus orderStatus, Address address, List<OrderItemQueryDto> orderItems) {
+		this.orderId = orderId;
+		this.name = name;
+		this.orderDate = orderDate;
+		this.orderStatus = orderStatus;
+		this.address = address;
+		this.orderItems = orderItems;
 	}
 }

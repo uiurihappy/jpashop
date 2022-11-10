@@ -88,8 +88,20 @@ public class OrderQueryRepository {
 				.collect(Collectors.toList());
 	}
 
-//	public List<OrderQueryDto> findAllByBto_Flat() {
-//
-//
-//	}
+	// order가 중복으로 나온다. 그럴 수 밖에 없는 게 일대다 조인으로 생성 했기에 order 데이터가 중복으로 나온다.
+	// 장점: 쿼리 한번으로 된다.
+	// 단점: order의 기준이 아닌 orderItems로 기준이 되어 페이징이 안된다.
+	// 중복 데이터가 추가되는 상황이므로 v5보다 더 느릴 수도 있다.
+	// 그리고 애플리케이션에서 추가 작업이 많이 될 수도 있다.
+	public List<OrderFlatDto> findAllByBto_Flat() {
+		return em.createQuery(
+				"select new " +
+						"jpabook.jpashop.repository.order.OrderFlatDto(o.id, m.name, o.orderDate, o.status, d.address, i.name, oi.orderPrice, oi.count )" +
+						" from Order o" +
+						" join o.member m" +
+						" join o.delivery d" +
+						" join o.orderItems oi" +
+						" join oi.item i", OrderFlatDto.class)
+				.getResultList();
+	}
 }
