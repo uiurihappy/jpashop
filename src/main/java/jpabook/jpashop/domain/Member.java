@@ -13,7 +13,7 @@ import java.util.List;
 @Getter @Setter
 public class Member {
 
-    @Id @GeneratedValue //시퀀스 값 사용
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) //시퀀스 값 사용
     @Column(name = "member_id")
     private Long id;
 
