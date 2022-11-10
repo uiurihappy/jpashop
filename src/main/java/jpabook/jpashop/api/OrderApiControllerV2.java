@@ -7,6 +7,8 @@ import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
 
+import jpabook.jpashop.repository.order.OrderQueryDto;
+import jpabook.jpashop.repository.order.OrderQueryRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 public class OrderApiControllerV2 {
 
 	private final OrderRepository orderRepository;
+	private final OrderQueryRepository orderQueryRepository;
 
 	@GetMapping("/v1/getOrders")
 	public OrderResult<List<Order>> ordersV1(){
@@ -109,6 +112,17 @@ public class OrderApiControllerV2 {
 	 * 웬만하면 default로 yml에 걸어놓고 개별로 @BatchSize로 설정하는 것이 best라고 생각한다.
 	 * size는 100~1000 사이로 설정하는 것을 권장한다. 이유는 batch를 시작하면 db 데이터를 확 size만큼 땡기기에 부하가 걸리지 않는 선에서 책정해야 한다.
 	 */
+
+	@GetMapping("/v4/getOrders")
+	public OrderResult<List<OrderQueryDto>> orderV4() {
+		List<OrderQueryDto> orderQuery = orderQueryRepository.findOrderQueryDtos();
+
+		return new OrderResult<>(orderQuery);
+
+	}
+
+	
+
 
 	@Data
 	@AllArgsConstructor
